@@ -1,23 +1,22 @@
-# Full-resolution images — too large for git, use R2 / local only
-dreame/
-roborock/
-dyson/
-samsung/
-xiaomi/
-haier/
-vipp/
-lg/
-hisense/
-gaggenau/
-apple/
-basalte/
-lutron/
-vzug/
-philips/
+# Full-resolution images — too large for git
+/dreame/
+/roborock/
+/dyson/
+/samsung/
+/xiaomi/
+/haier/
+/vipp/
+/lg/
+/hisense/
+/gaggenau/
+/apple/
+/basalte/
+/lutron/
+/vzug/
+/philips/
 
-# Keep thumbnails and data in git (deployed to Pages)
-!thumbs/
-!data.json
+# Logs
+*.log
 
 # Python
 __pycache__/
