@@ -1,48 +1,52 @@
 #!/bin/bash
 # Pull Instagram images for all brands via gallery-dl
-# Requires Chrome login to Instagram
+# Requires being logged into Instagram in Chrome
 
-set -euo pipefail
+set -uo pipefail
 BASE="$(cd "$(dirname "$0")/.." && pwd)"
-GDL=$(which gallery-dl 2>/dev/null || echo "/usr/local/bin/gallery-dl")
+GDL=$(which gallery-dl 2>/dev/null || echo "gallery-dl")
 
-declare -A HANDLES=(
-  [dreame]="dreame_tech"
-  [roborock]="roborock"
-  [dyson]="dyson"
-  [samsung]="smartthings"
-  [xiaomi]="mijia_global"
-  [haier]="haierglobal"
-  [vipp]="vipp"
-  [lg]="lg_homeappliances"
-  [hisense]="hisensehomeappliances"
-  [gaggenau]="gaggenauofficial"
-  [apple]="apple"
-  [basalte]="basalte.be"
-  [lutron]="lutronelectronics"
-  [vzug]="vzug"
-  [philips]="philipshomeliving"
-)
+BRANDS="dreame roborock dyson samsung xiaomi haier vipp lg hisense gaggenau apple basalte lutron vzug philips"
+
+handle_for() {
+  case "$1" in
+    dreame)   echo "dreame_tech" ;;
+    roborock) echo "roborock" ;;
+    dyson)    echo "dyson" ;;
+    samsung)  echo "smartthings" ;;
+    xiaomi)   echo "mijia_global" ;;
+    haier)    echo "haierglobal" ;;
+    vipp)     echo "vipp" ;;
+    lg)       echo "lg_homeappliances" ;;
+    hisense)  echo "hisensehomeappliances" ;;
+    gaggenau) echo "gaggenauofficial" ;;
+    apple)    echo "apple" ;;
+    basalte)  echo "basalte.be" ;;
+    lutron)   echo "lutronelectronics" ;;
+    vzug)     echo "vzug" ;;
+    philips)  echo "philipshomeliving" ;;
+  esac
+}
 
 RANGE="1-150"
-[ -n "${1:-}" ] && BRAND="$1" || BRAND=""
+TARGET="${1:-}"
 
-for brand in "${!HANDLES[@]}"; do
-  [ -n "$BRAND" ] && [ "$brand" != "$BRAND" ] && continue
-  handle="${HANDLES[$brand]}"
+for brand in $BRANDS; do
+  [ -n "$TARGET" ] && [ "$brand" != "$TARGET" ] && continue
+  handle=$(handle_for "$brand")
   out="$BASE/$brand/instagram"
   mkdir -p "$out"
-  echo "=== Downloading @$handle → $out ==="
+  echo "=== @$handle → $out ==="
   "$GDL" \
     --cookies-from-browser chrome \
     --write-metadata \
     --range "$RANGE" \
     -d "$out" \
-    "https://www.instagram.com/$handle/" || echo "  ⚠ Failed for @$handle"
-  # Flatten nested subdirectory gallery-dl creates
+    "https://www.instagram.com/$handle/" || echo "  ⚠ Failed @$handle"
+  # Flatten nested subdirs gallery-dl creates
   find "$out" -mindepth 2 \( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" \) -exec mv {} "$out/" \; 2>/dev/null || true
-  count=$(find "$out" -maxdepth 1 -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" 2>/dev/null | wc -l | tr -d ' ')
-  echo "  $count images in $out"
+  count=$(find "$out" -maxdepth 1 \( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" \) 2>/dev/null | wc -l | tr -d ' ')
+  echo "  → $count images"
 done
 
 echo ""

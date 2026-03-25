@@ -1,44 +1,48 @@
 #!/bin/bash
 # Pull YouTube thumbnails for all brands via yt-dlp
 
-set -euo pipefail
+set -uo pipefail
 BASE="$(cd "$(dirname "$0")/.." && pwd)"
 
-declare -A YT_CHANNELS=(
-  [dreame]="@DreameTech"
-  [roborock]="@RoborockOfficial"
-  [dyson]="@dyson"
-  [samsung]="@SamsungGlobal"
-  [xiaomi]="@XiaomiGlobal"
-  [haier]="@HaierGlobal"
-  [vipp]="@vippdesign"
-  [lg]="@LGUS"
-  [dyson]="@dyson"
-  [gaggenau]="@GaggenauOfficial"
-  [apple]="@Apple"
-  [lutron]="@LutronElectronics"
-  [vzug]="@VZUGnews"
-  [philips]="@PhilipsHomeLiving"
-)
+channel_for() {
+  case "$1" in
+    dreame)   echo "@DreameTech" ;;
+    roborock) echo "@RoborockOfficial" ;;
+    dyson)    echo "@dyson" ;;
+    samsung)  echo "@SamsungGlobal" ;;
+    xiaomi)   echo "@XiaomiGlobal" ;;
+    haier)    echo "@HaierGlobal" ;;
+    vipp)     echo "@vippdesign" ;;
+    lg)       echo "@LGUS" ;;
+    hisense)  echo "@HisenseGlobal" ;;
+    gaggenau) echo "@GaggenauOfficial" ;;
+    apple)    echo "@Apple" ;;
+    lutron)   echo "@LutronElectronics" ;;
+    vzug)     echo "@VZUGnews" ;;
+    philips)  echo "@PhilipsHomeLiving" ;;
+    basalte)  echo "@BasalteDesign" ;;
+  esac
+}
 
+BRANDS="dreame roborock dyson samsung xiaomi haier vipp lg hisense gaggenau apple basalte lutron vzug philips"
 LIMIT=30
-[ -n "${1:-}" ] && BRAND="$1" || BRAND=""
+TARGET="${1:-}"
 
-for brand in "${!YT_CHANNELS[@]}"; do
-  [ -n "$BRAND" ] && [ "$brand" != "$BRAND" ] && continue
-  channel="${YT_CHANNELS[$brand]}"
+for brand in $BRANDS; do
+  [ -n "$TARGET" ] && [ "$brand" != "$TARGET" ] && continue
+  channel=$(channel_for "$brand")
   out="$BASE/$brand/youtube"
   mkdir -p "$out"
-  echo "=== YouTube @$channel → $out ==="
+  echo "=== YouTube $channel → $out ==="
   yt-dlp \
     --skip-download \
     --write-thumbnail \
     --convert-thumbnails jpg \
     --playlist-end "$LIMIT" \
     -o "$out/%(id)s" \
-    "https://www.youtube.com/$channel/videos" 2>/dev/null || echo "  ⚠ Failed for $channel"
+    "https://www.youtube.com/$channel/videos" 2>&1 | grep -v "^\[debug\]" || echo "  ⚠ Failed $channel"
   count=$(find "$out" -name "*.jpg" 2>/dev/null | wc -l | tr -d ' ')
-  echo "  $count thumbnails"
+  echo "  → $count thumbnails"
 done
 
 echo "Done."
