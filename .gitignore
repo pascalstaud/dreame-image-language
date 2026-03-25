@@ -1,0 +1,27 @@
+# Full-resolution images — too large for git, use R2 / local only
+dreame/
+roborock/
+dyson/
+samsung/
+xiaomi/
+haier/
+vipp/
+lg/
+hisense/
+gaggenau/
+apple/
+basalte/
+lutron/
+vzug/
+philips/
+
+# Keep thumbnails and data in git (deployed to Pages)
+!thumbs/
+!data.json
+
+# Python
+__pycache__/
+*.pyc
+.DS_Store
+dist/
+node_modules/

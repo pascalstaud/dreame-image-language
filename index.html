@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dreame — Competitive Visual Language</title>
+<style>
+:root {
+  --bg: #0A0A0A;
+  --text: #E8E8E8;
+  --text-dim: #888;
+  --accent: #0057FF;
+  --border: #2A2A2A;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:40px 24px; }
+
+.wordmark { font-size:clamp(48px,8vw,96px); font-weight:700; letter-spacing:-2px; color:var(--text); }
+.wordmark span { color:var(--accent); }
+.subtitle { font-size:clamp(14px,2vw,18px); color:var(--text-dim); letter-spacing:3px; text-transform:uppercase; margin-top:12px; }
+.divider { width:60px; height:2px; background:var(--accent); margin:40px auto; }
+
+.cards { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; margin:40px 0; }
+.card {
+  display:flex; flex-direction:column; justify-content:flex-end;
+  width:260px; height:180px; border-radius:8px; overflow:hidden;
+  border:1px solid var(--border); background:#141414;
+  text-decoration:none; color:var(--text); position:relative;
+  transition:transform 0.2s, border-color 0.2s;
+}
+.card:hover { transform:translateY(-4px); border-color:var(--accent); }
+.card-bg { position:absolute; inset:0; object-fit:cover; width:100%; height:100%; opacity:0.5; }
+.card-body { position:relative; padding:16px; background:linear-gradient(transparent,rgba(0,0,0,0.85)); }
+.card-title { font-size:16px; font-weight:600; }
+.card-desc { font-size:12px; color:var(--text-dim); margin-top:4px; }
+
+.stats { display:flex; gap:48px; margin:40px 0; flex-wrap:wrap; justify-content:center; }
+.stat { text-align:center; }
+.stat-num { font-size:clamp(32px,5vw,56px); font-weight:700; color:var(--accent); line-height:1; }
+.stat-label { font-size:12px; color:var(--text-dim); margin-top:6px; letter-spacing:1px; text-transform:uppercase; }
+
+.footer { font-size:12px; color:var(--text-dim); margin-top:60px; text-align:center; line-height:1.8; }
+.footer a { color:var(--accent); text-decoration:none; }
+
+.tag { display:inline-block; font-size:10px; letter-spacing:1px; text-transform:uppercase; padding:3px 8px; border-radius:3px; border:1px solid var(--border); color:var(--text-dim); margin:2px; }
+.tags { margin-top:20px; }
+</style>
+</head>
+<body>
+
+<div class="wordmark">Dreame<span>.</span></div>
+<div class="subtitle">Competitive Visual Language Analysis</div>
+<div class="divider"></div>
+
+<div class="stats" id="stats">
+  <div class="stat"><div class="stat-num" id="total-images">—</div><div class="stat-label">Images</div></div>
+  <div class="stat"><div class="stat-num">15</div><div class="stat-label">Brands</div></div>
+  <div class="stat"><div class="stat-num">5</div><div class="stat-label">Channels</div></div>
+  <div class="stat"><div class="stat-num" id="total-models">—</div><div class="stat-label">Models</div></div>
+</div>
+
+<div class="tags">
+  <span class="tag" style="border-color:#0057FF;color:#0057FF">Dreame</span>
+  <span class="tag">Roborock</span>
+  <span class="tag">Dyson</span>
+  <span class="tag">Samsung</span>
+  <span class="tag">Xiaomi</span>
+  <span class="tag">Haier</span>
+  <span class="tag">VIPP</span>
+  <span class="tag">LG</span>
+  <span class="tag">Hisense</span>
+  <span class="tag">Gaggenau</span>
+  <span class="tag">Apple</span>
+  <span class="tag">Basalte</span>
+  <span class="tag">Lutron</span>
+  <span class="tag">V-ZUG</span>
+  <span class="tag">Philips</span>
+</div>
+
+<div class="cards" style="margin-top:48px">
+  <a href="visual-analysis.html" class="card">
+    <div class="card-body">
+      <div class="card-title">Visual Analysis</div>
+      <div class="card-desc">15 brands · filterable image grid · modal viewer</div>
+    </div>
+  </a>
+  <a href="training.html" class="card" id="training-card">
+    <div class="card-body">
+      <div class="card-title">Training Tool</div>
+      <div class="card-desc">Rate images · compare brand perception</div>
+    </div>
+  </a>
+</div>
+
+<div class="footer">
+  Goose Group × Pascal Staud Consulting<br>
+  <a href="visual-analysis.html">Open Dashboard →</a>
+</div>
+
+<script>
+fetch('data.json').then(r=>r.json()).then(data=>{
+  document.getElementById('total-images').textContent = data.length.toLocaleString();
+  const allModels = new Set();
+  data.forEach(d=>{ if(d.models) d.models.forEach(m=>allModels.add(m)); });
+  document.getElementById('total-models').textContent = allModels.size || '—';
+}).catch(()=>{});
+</script>
+</body>
+</html>
